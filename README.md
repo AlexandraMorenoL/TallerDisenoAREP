@@ -1,2 +1,8 @@
 # TallerDisenoAREP
-### corrige tal cosa 
+Nombre: Alexandra Moreno Latorre 
+
+---
+vesrwfd
+---
+
+
