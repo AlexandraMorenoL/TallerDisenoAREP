@@ -89,31 +89,45 @@ Salida. El formato de la salida y la respuesta debe ser un JSON con el siguiente
 En el campo de texto escriba la dirección de su repositorio GITHUB.
 ---
 
-Dentro encontrarás esta estructura:
+Lo que añadí
 
-math-proxy-microservices/
-├─ proxy/                 # Spring Boot: proxy round-robin + cliente web (index.html)
-│  └─ src/main/resources/static/index.html
-├─ math-service/          # Spring Boot: Fibonacci, Factorial, Primalidad
-└─ README.md              # Cómo compilar, correr local, y desplegar en AWS EC2
+En math-service (puerto 8081):
 
-Cómo probar rápido (resumen)
+GET /linearsearch?list=<csv>&value=<v> → búsqueda lineal (lista de cadenas).
+Respuesta JSON: {"operation":"linearSearch","inputlist":"<csv>","value":"<v>","output":"<idx|-1>"}
+
+GET /binarysearch?list=<csv>&value=<v> → búsqueda binaria recursiva (requiere lista ordenada lexicográficamente).
+Respuesta JSON análoga, retornando primera ocurrencia si hay duplicados.
+
+En proxy (puerto 8080): rutas espejo que delegan a los backends:
+
+GET /linearsearch?list=...&value=...
+
+GET /binarysearch?list=...&value=...
+
+Sigue soportando /api/fib, /api/fact, /api/isPrime, etc.
+
+MATH_TARGETS configura los targets (coma-separado).
+
+En el cliente web (proxy/src/main/resources/static/index.html):
+
+Formularios para Linear Search y Binary Search (asincrónicos con XHR; sin librerías).
+
+Prueba rápida (resumen)
 
 Compilar:
 
-cd math-service && mvn -q clean package
-cd ../proxy && mvn -q clean package
+(cd math-service && mvn -q clean package)
+(cd proxy && mvn -q clean package)
 
 
-Levantar dos instancias de math-service:
+Ejecutar dos instancias del servicio:
 
-# Terminal A
 java -jar math-service/target/math-service-0.0.1-SNAPSHOT.jar --server.port=8081
-# Terminal B
 java -jar math-service/target/math-service-0.0.1-SNAPSHOT.jar --server.port=8082
 
 
-Levantar el proxy (apuntando a ambas):
+Ejecutar el proxy apuntando a ambas:
 
 # Linux/macOS
 export MATH_TARGETS="http://localhost:8081,http://localhost:8082"
@@ -123,8 +137,11 @@ $env:MATH_TARGETS="http://localhost:8081,http://localhost:8082"
 java -jar proxy/target/math-proxy-0.0.1-SNAPSHOT.jar --server.port=8080
 
 
-Abre el cliente:
-http://localhost:8080/
-(o también prueba: /api/fib?n=10, /api/fact?n=10, /api/isPrime?n=97, /api/targets).
+Navega a http://localhost:8080/ y usa los formularios o invoca directo:
 
-Todo lo demás (incluido AWS EC2 paso a paso) está explicado dentro del README.md del zip.
+http://localhost:8080/linearsearch?list=10,20,13,40,60&value=13
+http://localhost:8080/linearsearch?list=10,20,13,40,60&value=99
+http://localhost:8080/binarysearch?list=10,13,20,40,60&value=13
+
+
+Todo el detalle de documentación y comandos quedó en el README del zip.
