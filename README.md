@@ -2,6 +2,7 @@
 Nombre: Alexandra Moreno Latorre 
 
 ---
+### Agrega esto
 Funciones de ordenamiento:
 Sus servicios  deben incluir dos funciones. 
 Uno recibe una lista de cadenas y un valor a buscar e implementa la búsqueda lineal :  linearSearch(lista, valor) retorna un json con el índice de la primera aparición del valor o con -1 si no encuentra el valor
